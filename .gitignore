@@ -1,0 +1,69 @@
+# Temp files
+*.swp
+*~
+*.tmp
+*.temp
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+out/
+.nyc_output/
+coverage/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+venv/
+env/
+.Python
+
+# Go
+/bin/
+/pkg/
+
+# Java
+target/
+*.class
+
+# Rust
+/target/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.yml
+
+# Misc
+*.log
+*.sqlite
+*.sqlite3
+*.pem
+
+# Ignore local VS Code settings
+.vscode/settings.json
