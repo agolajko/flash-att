@@ -42,7 +42,7 @@ __global__ void backward_kernel(
         // Load Kj, Vj to SRAM (Algorithm 4, line 7)
         for (int x = 0; x < d; x++)
         {
-            Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) + (tx * d) + x];
+            Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) - (tx * d) + x];
             Vj[(tx * d) + x] = V[qkv_offset + (tile_size * j) + (tx * d) + x];
         }
 
