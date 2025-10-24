@@ -35,8 +35,6 @@ __global__ void backward_kernel(
     float *P = &sram[tile_size * 5 + Bc * Br]; // reuse same space as needed
     float *dS = &sram[tile_size * 5 + Bc * Br * 2];
 
-    cudaDeviceSynchronize();
-
     // Outer loop over blocks of K and V
     for (int j = 0; j < Tc; j++)
     {
@@ -143,7 +141,6 @@ __global__ void backward_kernel(
                 }
                 dKj[x] += softmax_scale * dk_update;
             }
-            cudaDeviceSynchronize();
 
             // Accumulate dV_j += P_ij^T @ dO_i (Algorithm 4, line 16)
             for (int x = 0; x < d; x++)
@@ -158,7 +155,6 @@ __global__ void backward_kernel(
 
             __syncthreads();
         }
-        cudaDeviceSynchronize();
 
         // Write dK_j, dV_j to HBM (Algorithm 4, line 24)
         for (int x = 0; x < d; x++)
@@ -204,12 +200,16 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor> backward(
     dim3 grid_dim(B, nh); // batch_size x num_heads
     dim3 block_dim(Bc);   // Bc threads per block
 
+    cudaDeviceSynchronize();
+
     backward_kernel<<<grid_dim, block_dim, sram_size>>>(
         Q.data_ptr<float>(), K.data_ptr<float>(), V.data_ptr<float>(),
         O.data_ptr<float>(), dO.data_ptr<float>(),
         l.data_ptr<float>(), m.data_ptr<float>(),
         N, d, Tc, Tr, Bc, Br, softmax_scale,
         dQ.data_ptr<float>(), dK.data_ptr<float>(), dV.data_ptr<float>());
+
+    cudaDeviceSynchronize();
 
     return std::make_tuple(dQ, dK, dV);
 }
