@@ -55,6 +55,9 @@ def test_against_pytorch_reference():
     print(
         f"dV matches: {torch.allclose(V_flash.grad, V_ref.grad, rtol=1e-3, atol=1e-4)}")
 
+    print("\n section of dQ gradients:", Q_flash.grad[0, 0, :5, :5])
+    print("\n section of dQ ref gradients:", Q_ref.grad[0, 0, :5, :5])
+
     print(f"\nMax dQ error: {(Q_flash.grad - Q_ref.grad).abs().max().item()}")
     print(f"Max dK error: {(K_flash.grad - K_ref.grad).abs().max().item()}")
     print(f"Max dV error: {(V_flash.grad - V_ref.grad).abs().max().item()}")
