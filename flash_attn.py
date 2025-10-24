@@ -1,16 +1,17 @@
 import torch
 from torch.autograd import Function
 from torch.utils.cpp_extension import load
+import minimal_attn
 
 # Load your CUDA extension
-minimal_attn = load(
-    name='minimal_attn',
-    sources=['main.cpp', 'flash.cu', 'backward.cu'],
-    extra_cuda_cflags=['-O2'],
-    verbose=True,
-    with_cuda=True,
-    build_directory='./build',
-)
+# minimal_attn = load(
+#     name='minimal_attn',
+#     sources=['main.cpp', 'flash.cu', 'backward.cu'],
+#     extra_cuda_cflags=['-O2'],
+#     verbose=True,
+#     with_cuda=True,
+#     build_directory='./build',
+# )
 
 
 class FlashAttentionFunction(Function):
