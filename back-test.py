@@ -22,12 +22,6 @@ def test_against_pytorch_reference():
     K_flash = K.detach().clone().requires_grad_(True)
     V_flash = V.detach().clone().requires_grad_(True)
 
-    # Your implementation - NOW THIS WILL WORK!
-    # Uses the autograd wrapper
-    O_flash = flash_attention(Q_flash, K_flash, V_flash)
-    grad_output = torch.randn_like(O_flash)
-    O_flash.backward(grad_output)
-
     # PyTorch reference
     scale = 1.0 / math.sqrt(d)
     O_ref = F.scaled_dot_product_attention(
@@ -36,6 +30,16 @@ def test_against_pytorch_reference():
         dropout_p=0.0,
         scale=scale
     )
+
+    # Your implementation - NOW THIS WILL WORK!
+    # Uses the autograd wrapper
+    O_flash = flash_attention(Q_flash, K_flash, V_flash)
+    grad_output = torch.randn_like(O_flash)
+
+    O_flash.backward(grad_output)
+
+    print(f"✅ Flash backward succeeded")
+
     O_ref.backward(grad_output)
 
     # Compare outputs
@@ -45,15 +49,15 @@ def test_against_pytorch_reference():
 
     # Compare gradients
     print(
-        f"\ndQ matches: {torch.allclose(Q.grad, Q_ref.grad, rtol=1e-3, atol=1e-4)}")
+        f"\ndQ matches: {torch.allclose(Q_flash.grad, Q_ref.grad, rtol=1e-3, atol=1e-4)}")
     print(
-        f"dK matches: {torch.allclose(K.grad, K_ref.grad, rtol=1e-3, atol=1e-4)}")
+        f"dK matches: {torch.allclose(K_flash.grad, K_ref.grad, rtol=1e-3, atol=1e-4)}")
     print(
-        f"dV matches: {torch.allclose(V.grad, V_ref.grad, rtol=1e-3, atol=1e-4)}")
+        f"dV matches: {torch.allclose(V_flash.grad, V_ref.grad, rtol=1e-3, atol=1e-4)}")
 
-    print(f"\nMax dQ error: {(Q.grad - Q_ref.grad).abs().max().item()}")
-    print(f"Max dK error: {(K.grad - K_ref.grad).abs().max().item()}")
-    print(f"Max dV error: {(V.grad - V_ref.grad).abs().max().item()}")
+    print(f"\nMax dQ error: {(Q_flash.grad - Q_ref.grad).abs().max().item()}")
+    print(f"Max dK error: {(K_flash.grad - K_ref.grad).abs().max().item()}")
+    print(f"Max dV error: {(V_flash.grad - V_ref.grad).abs().max().item()}")
 
 
 if __name__ == "__main__":
