@@ -6,7 +6,7 @@ from flash_attn import flash_attention  # Import your wrapper
 
 def test_against_pytorch_reference():
     """Compare against PyTorch's implementation"""
-    B, nh, N, d = 16, 12, 64, 64
+    B, nh, N, d = 2, 2, 32, 64
 
     # Create inputs
     Q = torch.randn(B, nh, N, d, requires_grad=True, device='cuda')

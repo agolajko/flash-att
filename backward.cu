@@ -176,8 +176,8 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor> backward(
     torch::Tensor l,
     torch::Tensor m)
 {
-    const int Bc = 32;
-    const int Br = 32;
+    const int Bc = 16;
+    const int Br = 16;
 
     const int B = Q.size(0);
     const int nh = Q.size(1);
