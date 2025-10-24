@@ -13,13 +13,18 @@ def test_against_pytorch_reference():
     K = torch.randn(B, nh, N, d, requires_grad=True, device='cuda')
     V = torch.randn(B, nh, N, d, requires_grad=True, device='cuda')
 
-    # Clone for reference
-    Q_ref = Q.clone().detach().requires_grad_(True)
-    K_ref = K.clone().detach().requires_grad_(True)
-    V_ref = V.clone().detach().requires_grad_(True)
+    Q_ref = Q.detach().clone().requires_grad_(True)
+    K_ref = K.detach().clone().requires_grad_(True)
+    V_ref = V.detach().clone().requires_grad_(True)
+
+    # NOW enable gradients for your implementation
+    Q_flash = Q.detach().clone().requires_grad_(True)
+    K_flash = K.detach().clone().requires_grad_(True)
+    V_flash = V.detach().clone().requires_grad_(True)
 
     # Your implementation - NOW THIS WILL WORK!
-    O_flash = flash_attention(Q, K, V)  # Uses the autograd wrapper
+    # Uses the autograd wrapper
+    O_flash = flash_attention(Q_flash, K_flash, V_flash)
     grad_output = torch.randn_like(O_flash)
     O_flash.backward(grad_output)
 
