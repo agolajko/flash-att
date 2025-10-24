@@ -89,7 +89,8 @@ __global__ void forward_kernel(const float *Q, const float *K, const float *V, c
     }
 }
 
-torch::Tensor forward(torch::Tensor Q, torch::Tensor K, torch::Tensor V)
+std::tuple<torch::Tensor, torch::Tensor, torch::Tensor> forward(
+    torch::Tensor Q, torch::Tensor K, torch::Tensor V)
 {
     // TODO: determine Bc, Br dynamically
     const int Bc = 32;
@@ -125,5 +126,5 @@ torch::Tensor forward(torch::Tensor Q, torch::Tensor K, torch::Tensor V)
         Q.data_ptr<float>(), K.data_ptr<float>(), V.data_ptr<float>(),
         N, d, Tc, Tr, Bc, Br, softmax_scale,
         l.data_ptr<float>(), m.data_ptr<float>(), O.data_ptr<float>());
-    return O;
+    return std::make_tuple(O, l, m);
 }
