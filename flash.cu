@@ -26,6 +26,8 @@ __global__ void forward_kernel(const float *Q, const float *K, const float *V, c
     {
 
         // Load Kj, Vj to SRAM
+        // we're taking a 2 dimensional data (Bc x d) and mapping it to 1D data
+        // however, as long as the specific values are multiplied by the correct indices it should be fine
         for (int x = 0; x < d; x++)
         {
             Kj[(tx * d) + x] = K[qkv_offset + (tile_size * j) + (tx * d) + x];
