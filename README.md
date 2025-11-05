@@ -1,3 +1,7 @@
+## Flash attn forward and backward pass
+
+Includes profiling and a test to ensure the backward pass values are all correct
+
 ## Installation
 
 1. Create venv
